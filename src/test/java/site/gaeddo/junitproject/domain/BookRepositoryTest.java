@@ -1,13 +1,16 @@
 package site.gaeddo.junitproject.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest // db와 관련된 컴포넌트만 메모리에 등록된다.
 public class BookRepositoryTest {
@@ -64,6 +67,7 @@ public class BookRepositoryTest {
     }
 
     // 3. 책 한 건 보기 테스트
+    @Sql("classpath:db/tableInit.sql")
     @Test
     public void 책한건보기_test() {
         // given
@@ -78,5 +82,20 @@ public class BookRepositoryTest {
         assertEquals(author, bookPS.getAuthor());
     }
 
-    // 4. 책 수정 및 삭제 테스트
+    // 4. 책 삭제 테스트
+    @Sql("classpath:db/tableInit.sql")
+    @Test
+    public void 책삭제_test() {
+        // given
+        Long id = 1L;
+
+        // when
+        bookRepository.deleteById(id);
+
+        // then
+        assertFalse(bookRepository.findById(id).isPresent());
+
+    }
+
+    // 5. 책 수정 테스트
 }
