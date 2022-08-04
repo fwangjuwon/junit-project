@@ -2,6 +2,9 @@ package site.gaeddo.junitproject.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +14,19 @@ public class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @BeforeEach
+    public void 데이터준비() {
+
+        String title = "junit";
+        String author = "getinthere";
+        Book book = Book.builder()
+                .title(title)
+                .author(author)
+                .build();
+
+        bookRepository.save(book);
+    }
 
     // 1. 책 등록이 잘 되는지 테스트
     @Test
@@ -29,11 +45,38 @@ public class BookRepositoryTest {
         // then(검증)
         assertEquals(title, bookPS.getTitle());
         assertEquals(author, bookPS.getAuthor());
-    }
+    } // transaction이 종료 돼서 저장된 데이터를 초기화시켜 버린다.
 
     // 2. 책 목록보기 테스트
+    @Test
+    public void 책목록보기_test() {
+        // given
+        String title = "junit";
+        String author = "getinthere";
+
+        // when
+        List<Book> booksPS = bookRepository.findAll();
+
+        System.out.println("사이즈 --------------------------------" + booksPS.size());
+        // then
+        assertEquals(title, booksPS.get(0).getTitle());
+        assertEquals(author, booksPS.get(0).getAuthor());
+    }
 
     // 3. 책 한 건 보기 테스트
+    @Test
+    public void 책한건보기_test() {
+        // given
+        String title = "junit";
+        String author = "getinthere";
+
+        // when
+        Book bookPS = bookRepository.findById(1L).get();
+
+        // then
+        assertEquals(title, bookPS.getTitle());
+        assertEquals(author, bookPS.getAuthor());
+    }
 
     // 4. 책 수정 및 삭제 테스트
 }
