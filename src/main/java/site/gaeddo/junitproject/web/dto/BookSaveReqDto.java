@@ -1,8 +1,10 @@
 package site.gaeddo.junitproject.web.dto;
 
+import lombok.Getter;
 import lombok.Setter;
 import site.gaeddo.junitproject.domain.Book;
 
+@Getter
 @Setter
 public class BookSaveReqDto {
     private String title;

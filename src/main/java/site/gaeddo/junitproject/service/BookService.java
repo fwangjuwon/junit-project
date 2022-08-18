@@ -1,6 +1,8 @@
 package site.gaeddo.junitproject.service;
 
+import java.lang.StackWalker.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -34,8 +36,31 @@ public class BookService {
     }
 
     // 3. 책 한건보기
+    public BookRespDto 책한건보기(Long id) {
+        Optional<Book> bookOP = bookRepository.findById(id);
+        if (bookOP.isPresent()) {
+            return new BookRespDto().toDto(bookOP.get());
+        } else {
+            throw new RuntimeException("해당 아이디를 찾을 수 없습니다");
+        }
+    }
 
     // 4. 책 삭제
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void 책삭제하기(Long id) {
+        bookRepository.deleteById(id);
+    }
 
     // 5. 책 수정
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void 책수정하기(Long id, BookSaveReqDto dto) {
+        Optional<Book> bookOp = bookRepository.findById(id);
+        if (bookOp.isPresent()) {
+            Book bookPS = bookOp.get();
+            bookPS.update(dto.getTitle(), dto.getAuthor());
+        } else {
+            throw new RuntimeException("해당 아이디를 찾을 수 없습니다");
+        }
+    }// method종료시 dirtychecking으로 update된다. (db로 flush된다)
+
 }
