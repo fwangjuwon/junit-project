@@ -7,7 +7,7 @@ public class MailSenderStub implements MailSender {
 
     @Override
     public boolean send() {
-        return false;
+        return true;
     }
 
 }
