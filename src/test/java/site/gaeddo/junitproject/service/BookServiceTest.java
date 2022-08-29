@@ -1,21 +1,35 @@
 package site.gaeddo.junitproject.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import site.gaeddo.junitproject.domain.BookRepository;
+import site.gaeddo.junitproject.util.MailSender;
 import site.gaeddo.junitproject.util.MailSenderStub;
 import site.gaeddo.junitproject.web.dto.BookRespDto;
 import site.gaeddo.junitproject.web.dto.BookSaveReqDto;
 
-@DataJpaTest
+@ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
 
-    @Autowired
+    @InjectMocks
+    private BookService bookService;
+
+    @Mock
     private BookRepository bookRepository;
+
+    @Mock
+    private MailSender mailSender;
 
     @Test
     public void 책등록하기_테스트() {
@@ -25,16 +39,13 @@ public class BookServiceTest {
         dto.setAuthor("getinthere");
 
         // stub
-        MailSenderStub mailSenderStub = new MailSenderStub();
-
-        // 가짜로 bookrepository만들기
-
+        when(bookRepository.save(any())).thenReturn(dto.toEntity());
+        when(mailSender.send()).thenReturn(true);
         // when
-        BookService bookService = new BookService(bookRepository, mailSenderStub);
         BookRespDto bookRespDto = bookService.책등록하기(dto);
 
         // then
-        assertEquals(dto.getTitle(), bookRespDto.getTitle());
-        assertEquals(dto.getAuthor(), bookRespDto.getAuthor());
+        assertThat(bookRespDto.getTitle()).isEqualTo(dto.getTitle());
+        assertThat(bookRespDto.getAuthor()).isEqualTo(dto.getAuthor());
     }
 }

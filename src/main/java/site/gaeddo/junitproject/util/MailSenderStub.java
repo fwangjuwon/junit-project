@@ -9,5 +9,4 @@ public class MailSenderStub implements MailSender {
     public boolean send() {
         return true;
     }
-
 }
