@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice.Return;
 import site.gaeddo.junitproject.domain.Book;
 import site.gaeddo.junitproject.domain.BookRepository;
 import site.gaeddo.junitproject.util.MailSender;
@@ -74,11 +75,12 @@ public class BookService {
 
     // 5. 책 수정
     @Transactional(rollbackFor = RuntimeException.class)
-    public void 책수정하기(Long id, BookSaveReqDto dto) {
+    public BookRespDto 책수정하기(Long id, BookSaveReqDto dto) {
         Optional<Book> bookOp = bookRepository.findById(id);
         if (bookOp.isPresent()) {
             Book bookPS = bookOp.get();
             bookPS.update(dto.getTitle(), dto.getAuthor());
+            return bookPS.toDto();
         } else {
             throw new RuntimeException("해당 아이디를 찾을 수 없습니다");
         }

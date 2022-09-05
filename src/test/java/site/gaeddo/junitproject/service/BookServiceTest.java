@@ -104,4 +104,25 @@ public class BookServiceTest {
         assertThat(bookRespDto.getTitle()).isEqualTo(book.getTitle());
         assertThat(bookRespDto.getAuthor()).isEqualTo(book.getAuthor());
     }
+
+    @Test
+    public void 책수정하기_test() {
+        // given
+        Long id = 1L;
+        BookSaveReqDto dto = new BookSaveReqDto();
+        dto.setTitle("spring강의");
+        dto.setAuthor("메타코딩");
+
+        // stub
+        Book book = new Book(1L, "junit강의", "겟인데어");
+        Optional<Book> bookOp = Optional.of(book);
+        when(bookRepository.findById(1L)).thenReturn(bookOp);
+
+        // when
+        BookRespDto bookRespDto = bookService.책수정하기(1L, dto);
+
+        // then
+        assertThat(bookRespDto.getTitle()).isEqualTo(dto.getTitle());
+        assertThat(bookRespDto.getAuthor()).isEqualTo(dto.getAuthor());
+    }
 }
